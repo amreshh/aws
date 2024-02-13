@@ -15,6 +15,15 @@ module "s3" {
   bucket_name = "${data.aws_region.current.name}-${data.aws_caller_identity.current.account_id}-data"
 }
 
+module "ecr" {
+  source                 = "./modules/ecr"
+  cross_account_role_arn = module.iam.ecs_role.arn
+
+  depends_on = [
+    module.iam
+  ]
+}
+
 module "ecs" {
   source                     = "./modules/ecs"
   task_role_arn              = module.iam.ecs_role.arn
@@ -27,11 +36,3 @@ module "ecs" {
   ]
 }
 
-module "ecr" {
-  source                 = "./modules/ecr"
-  cross_account_role_arn = module.iam.ecs_role.arn
-
-  depends_on = [
-    module.iam
-  ]
-}

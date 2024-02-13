@@ -5,6 +5,7 @@ resource "aws_iam_policy" "ecs_task_policy" {
     Version = "2012-10-17",
     Statement = [
       {
+        Sid    = "ECSExecutionPolicy",
         Effect = "Allow",
         Action = [
           "ecr:GetAuthorizationToken",
@@ -12,7 +13,11 @@ resource "aws_iam_policy" "ecs_task_policy" {
           "ecr:GetDownloadUrlForLayer",
           "ecr:BatchGetImage",
           "logs:CreateLogStream",
-          "logs:PutLogEvents"
+          "logs:PutLogEvents",
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:ListBucket",
+          "s3:DeleteObject"
         ],
         Resource = ["*"]
       }

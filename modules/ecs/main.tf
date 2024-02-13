@@ -27,7 +27,7 @@ resource "aws_ecs_cluster_capacity_providers" "ecs_capacity_provider" {
 }
 
 resource "aws_ecs_task_definition" "ecs_task" {
-  family                   = "nginx-task"
+  family                   = "s3_test"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
 
@@ -39,14 +39,14 @@ resource "aws_ecs_task_definition" "ecs_task" {
 
   container_definitions = jsonencode([
     {
-      name  = "nginx"
-      image = "905418158245.dkr.ecr.eu-central-1.amazonaws.com/sandbox_ecr:latest"
+      name  = "s3_test"
+      image = "905418158245.dkr.ecr.eu-central-1.amazonaws.com/sandbox_ecr:fedora_aws_cli"
       logConfiguration = {
         logDriver = "awslogs"
         options = {
           "awslogs-group"         = var.cloud_watch_log_group_name
           "awslogs-region"        = "eu-central-1"
-          "awslogs-stream-prefix" = "nginx"
+          "awslogs-stream-prefix" = "s3_test"
         }
       }
     }
