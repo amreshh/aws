@@ -45,6 +45,7 @@ resource "aws_default_route_table" "default_route_table" {
 
   route {
     cidr_block = "10.0.0.0/16"
+    gateway_id = "local"
   }
 
   tags = {
