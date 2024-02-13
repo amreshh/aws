@@ -10,4 +10,4 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/aws
 RUN unzip -d /tmp/ /tmp/awscliv2.zip
 RUN ./tmp/aws/install
 
-CMD "/tmp/script.sh > $(date +%s).txt"
+CMD "/tmp/script.sh"
