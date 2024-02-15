@@ -78,30 +78,50 @@ resource "aws_route_table_association" "public_subnet_association" {
   route_table_id = aws_route_table.public_route_table.id
 }
 
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    protocol  = -1
+    self      = true
+    from_port = 0
+    to_port   = 0
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "Allow All Traffic"
+  }
+}
+
 resource "aws_security_group" "ecs_security_group" {
   name        = "ecs_security_group"
   description = "Security group for ECS tasks"
   vpc_id      = aws_vpc.main.id
 
   egress {
-    description      = "Allow egress tls traffic"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    description = "Allow egress tls traffic"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = var.private_subnet_cidrs
   }
   ingress {
-    description      = "Allow ingress tls traffic"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    description = "Allow ingress tls traffic"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = var.private_subnet_cidrs
   }
 
   tags = {
-    Name = "TLS Traffic"
+    Name = "Egress TLS Traffic"
   }
 }
 
@@ -124,7 +144,7 @@ resource "aws_vpc_endpoint" "ecr_api" {
   auto_accept         = true
   private_dns_enabled = true
   subnet_ids          = [for subnet in aws_subnet.private_subnets : subnet.id]
-  security_group_ids  = [aws_security_group.ecs_security_group.id]
+  security_group_ids  = [aws_default_security_group.default.id]
 
   tags = {
     Name = "ECR API"
@@ -138,7 +158,7 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
   auto_accept         = true
   private_dns_enabled = true
   subnet_ids          = [for subnet in aws_subnet.private_subnets : subnet.id]
-  security_group_ids  = [aws_security_group.ecs_security_group.id]
+  security_group_ids  = [aws_default_security_group.default.id]
 
   tags = {
     Name = "ECR Docker Registry"
@@ -152,7 +172,7 @@ resource "aws_vpc_endpoint" "ecr_cloudwatch" {
   auto_accept         = true
   private_dns_enabled = true
   subnet_ids          = [for subnet in aws_subnet.private_subnets : subnet.id]
-  security_group_ids  = [aws_security_group.ecs_security_group.id]
+  security_group_ids  = [aws_default_security_group.default.id]
 
   tags = {
     Name = "ECR Cloudwatch Logs"

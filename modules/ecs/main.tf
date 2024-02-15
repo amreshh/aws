@@ -40,7 +40,7 @@ resource "aws_ecs_task_definition" "ecs_task" {
   container_definitions = jsonencode([
     {
       name  = "s3_test"
-      image = "905418158245.dkr.ecr.eu-central-1.amazonaws.com/sandbox_ecr:fedora_aws_cli"
+      image = "${var.ecr_url}:fedora_aws_cli"
       logConfiguration = {
         logDriver = "awslogs"
         options = {

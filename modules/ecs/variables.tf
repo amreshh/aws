@@ -12,3 +12,8 @@ variable "cloud_watch_log_group_name" {
   type        = string
   description = "log group to send task logs"
 }
+
+variable "ecr_url" {
+  type        = string
+  description = "url of the ecr repository"
+}
