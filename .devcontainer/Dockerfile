@@ -1,12 +1,13 @@
-FROM docker.io/fedora:40
+FROM registry.opensuse.org/opensuse/leap:15
 
-ENV TERRAFORM_VERSION="1.7.2"
+ENV OPENTOFU_VERSION="1.6.1-1"
 
-RUN dnf install -y unzip git
+ADD ./opentofu.repo /etc/zypp/repos.d/opentofu.repo
 
-# Terraform
-RUN curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -o /tmp/terraform.zip
-RUN unzip /tmp/terraform.zip -d /usr/local/bin/
+# RUN zypper --gpg-auto-import-keys ref
+RUN zypper --gpg-auto-import-keys refresh opentofu
+RUN zypper --gpg-auto-import-keys refresh opentofu-source
+RUN zypper install -y tar gzip unzip git tofu-${OPENTOFU_VERSION}
 
 # AWS CLI
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"

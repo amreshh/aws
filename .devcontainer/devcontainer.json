@@ -1,29 +1,38 @@
 {
-    "dockerFile": "Dockerfile",
-    "shutdownAction": "stopContainer",
-    "runArgs": [
-      "--env-file",
-      ".devcontainer/devcontainer.env"
-    ],
-    "customizations": {
-      "vscode": {
-        "settings": {
-          "terminal.integrated.defaultProfile.linux": "bash",
-          "terminal.integrated.profiles.linux": {
-            "bash": {
-              "path": "/bin/bash"
-            }
+  "name": "aws",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "shutdownAction": "stopContainer",
+  "runArgs": [
+    "--env-file",
+    ".devcontainer/devcontainer.env"
+  ],
+  "mounts": [
+    "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.gnupg,target=/root/.gnupg,type=bind,consistency=cached",
+    "source=.devcontainer/opentofu.repo,target=/etc/zypp/repos.d/opentofu.repo,type=bind,consistency=cached"
+  ],
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "/bin/bash"
           }
-        },
-        "extensions": [
-          "VisualStudioExptTeam.vscodeintellicode",
-          "GitHub.copilot-nightly",
-          "bierner.markdown-mermaid",
-          "docsmsft.docs-markdown",
-          "HashiCorp.terraform",
-          "eamodio.gitlens"
-        ]
-      }
+        }
+      },
+      "extensions": [
+        "VisualStudioExptTeam.vscodeintellicode",
+        "GitHub.copilot-nightly",
+        "bierner.markdown-mermaid",
+        "docsmsft.docs-markdown",
+        "HashiCorp.terraform",
+        "eamodio.gitlens"
+      ]
     }
   }
-  
+}
