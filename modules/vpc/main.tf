@@ -122,10 +122,11 @@ resource "aws_security_group" "vpc_endpoint_security_group" {
 
 resource "aws_vpc_security_group_egress_rule" "ecs_security_group_egress" {
   security_group_id = aws_security_group.ecs_security_group.id
-  cidr_ipv4 = "10.0.0.0/16"
-  ip_protocol = "-1"
-  # from_port = 0
-  # to_port = 0
+  # cidr_ipv4 = "10.0.0.0/16"
+  cidr_ipv4 = "0.0.0.0/0"
+  ip_protocol = "tcp"
+  from_port = 443
+  to_port = 443
 
   tags = {
     Name = "Private Subnet Egress"
