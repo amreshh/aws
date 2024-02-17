@@ -4,7 +4,6 @@ ENV OPENTOFU_VERSION="1.6.1-1"
 
 ADD ./opentofu.repo /etc/zypp/repos.d/opentofu.repo
 
-# RUN zypper --gpg-auto-import-keys ref
 RUN zypper --gpg-auto-import-keys refresh opentofu
 RUN zypper --gpg-auto-import-keys refresh opentofu-source
 RUN zypper install -y tar gzip unzip git tofu-${OPENTOFU_VERSION}

@@ -12,8 +12,7 @@
   "mounts": [
     "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached",
     "source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind,consistency=cached",
-    "source=${localEnv:HOME}/.gnupg,target=/root/.gnupg,type=bind,consistency=cached",
-    "source=.devcontainer/opentofu.repo,target=/etc/zypp/repos.d/opentofu.repo,type=bind,consistency=cached"
+    "source=${localEnv:HOME}/.gnupg,target=/root/.gnupg,type=bind,consistency=cached"
   ],
   "customizations": {
     "vscode": {
