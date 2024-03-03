@@ -5,7 +5,7 @@ resource "aws_iam_policy" "eks_cluster_policy" {
     Version = "2012-10-17",
     Statement = [
       {
-        Sid    = "EKSCluster"
+        Sid    = "EKSClusterPolicy"
         Effect = "Allow"
         Action = [
           "autoscaling:DescribeAutoScalingGroups",
@@ -75,9 +75,9 @@ resource "aws_iam_policy" "eks_cluster_policy" {
   })
 }
 
-resource "aws_iam_policy" "eks_worker_policy" {
-  name        = "eks_worker_policy"
-  description = "EKS Worker Node Policy"
+resource "aws_iam_policy" "eks_node_group_policy" {
+  name        = "eks_node_group_policy"
+  description = "EKS Node Group Policy"
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -147,8 +147,8 @@ resource "aws_iam_policy" "eks_worker_policy" {
   })
 }
 
-resource "aws_iam_role" "eks_role" {
-  name        = "eks_role"
+resource "aws_iam_role" "eks_cluster_role" {
+  name        = "eks_cluster_role"
   description = "EKS Cluster Role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -159,10 +159,20 @@ resource "aws_iam_role" "eks_role" {
         Principal = {
           Service = "eks.amazonaws.com"
         }
-      },
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role" "eks_node_group_role" {
+  name        = "eks_node_group_role"
+  description = "EKS Node Group Role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
       {
         Action = ["sts:AssumeRole"],
-        Effect = "Allow",
+        Effect = "Allow"
         Principal = {
           Service = "ec2.amazonaws.com"
         }
@@ -174,11 +184,11 @@ resource "aws_iam_role" "eks_role" {
 resource "aws_iam_policy_attachment" "eks_cluster_policy_attachment" {
   name       = "eks_cluster_policy_attachment"
   policy_arn = aws_iam_policy.eks_cluster_policy.arn
-  roles      = [aws_iam_role.eks_role.name]
+  roles      = [aws_iam_role.eks_cluster_role.name]
 }
 
-resource "aws_iam_policy_attachment" "eks_worker_policy_attachment" {
-  name       = "eks_worker_policy_attachment"
-  policy_arn = aws_iam_policy.eks_worker_policy.arn
-  roles      = [aws_iam_role.eks_role.name]
+resource "aws_iam_policy_attachment" "eks_node_group_attachment" {
+  name       = "eks_node_group_attachment"
+  policy_arn = aws_iam_policy.eks_node_group_policy.arn
+  roles      = [aws_iam_role.eks_cluster_role.name]
 }

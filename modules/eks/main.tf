@@ -1,6 +1,6 @@
 resource "aws_eks_cluster" "eks_cluster" {
   name     = "eks_cluster"
-  role_arn = aws_iam_role.eks_role.arn
+  role_arn = aws_iam_role.eks_cluster_role.arn
 
   vpc_config {
     subnet_ids              = var.subnet_ids
@@ -10,15 +10,14 @@ resource "aws_eks_cluster" "eks_cluster" {
   }
 
   depends_on = [
-    aws_iam_policy_attachment.eks_cluster_policy_attachment,
-    aws_iam_policy_attachment.eks_worker_policy_attachment
+    aws_iam_policy_attachment.eks_cluster_policy_attachment
   ]
 }
 
 resource "aws_eks_node_group" "eks_node_group" {
   cluster_name    = aws_eks_cluster.eks_cluster.name
   node_group_name = "eks_node_group"
-  node_role_arn   = aws_iam_role.eks_role.arn
+  node_role_arn   = aws_iam_role.eks_node_group_role.arn
   subnet_ids      = var.subnet_ids
   instance_types  = ["t3.small"]
   disk_size       = 20
@@ -34,7 +33,6 @@ resource "aws_eks_node_group" "eks_node_group" {
   }
 
   depends_on = [
-    aws_iam_policy_attachment.eks_cluster_policy_attachment,
-    aws_iam_policy_attachment.eks_worker_policy_attachment
+    aws_iam_policy_attachment.eks_node_group_attachment
   ]
 }
