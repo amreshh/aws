@@ -37,7 +37,7 @@ module "vpc" {
 #   ]
 # }
 
-module "eks" {
-  source     = "./modules/eks"
-  subnet_ids = module.vpc.private_subnets.*.id
-}
+# module "eks" {
+#   source     = "./modules/eks"
+#   subnet_ids = module.vpc.private_subnets[*].id
+# }
