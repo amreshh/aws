@@ -21,6 +21,7 @@ resource "aws_eks_node_group" "eks_node_group" {
   subnet_ids      = var.subnet_ids
   instance_types  = ["t3.small"]
   disk_size       = 20
+  version = "1.29"
 
   scaling_config {
     desired_size = 1
