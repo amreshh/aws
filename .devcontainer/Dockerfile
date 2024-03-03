@@ -6,7 +6,7 @@ ADD ./opentofu.repo /etc/zypp/repos.d/opentofu.repo
 
 RUN zypper --gpg-auto-import-keys refresh opentofu
 RUN zypper --gpg-auto-import-keys refresh opentofu-source
-RUN zypper install -y tar gzip unzip git tofu-${OPENTOFU_VERSION}
+RUN zypper install -y tar gzip unzip git openssh tofu-${OPENTOFU_VERSION}
 
 # AWS CLI
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
