@@ -74,16 +74,16 @@ resource "aws_route_table" "public_route_table" {
 }
 
 resource "aws_route_table" "private_route_table" {
-  for_each = toset(aws_nat_gateway.private_nat_gateway[*].id)
-  vpc_id   = aws_vpc.main.id
+  count  = length(aws_nat_gateway.private_nat_gateway)
+  vpc_id = aws_vpc.main.id
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = each.key
+    gateway_id = aws_nat_gateway.private_nat_gateway[count.index].id
   }
 
   tags = {
-    Name = "private route table ${each.key}"
+    Name = "private route table ${element(var.availability_zones, count.index)}"
   }
 }
 
@@ -96,7 +96,7 @@ resource "aws_route_table_association" "public_subnet_association" {
 resource "aws_route_table_association" "private_subnet_association" {
   count          = length(var.private_subnet_cidrs)
   subnet_id      = element(aws_subnet.private_subnets[*].id, count.index)
-  route_table_id = aws_route_table.private_route_table[aws_nat_gateway.private_nat_gateway[count.index].id].id
+  route_table_id = element(aws_route_table.private_route_table[*].id, count.index)
 }
 
 # resource "aws_default_security_group" "default" {
