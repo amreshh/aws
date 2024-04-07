@@ -29,7 +29,7 @@
         "GitHub.copilot-nightly",
         "bierner.markdown-mermaid",
         "docsmsft.docs-markdown",
-        "HashiCorp.terraform",
+        "gamunu.opentofu",
         "eamodio.gitlens"
       ]
     }

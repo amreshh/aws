@@ -1,16 +1,25 @@
 {
-    "terraform.codelens.referenceCount": true,
+    "editor.suggest.preview": true,
+    "editor.formatOnSave": true,
+    "opentofu.languageServer.enable": true,
+    "opentofu.experimentalFeatures.prefillRequiredFields": true,
+    "opentofu.codelens.referenceCount": true,
+    "opentofu.experimentalFeatures.validateOnSave": true,
     "[terraform]": {
-        "editor.defaultFormatter": "hashicorp.terraform",
-        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "gamunu.opentofu",
+        "editor.formatOnSave": false,
         "editor.formatOnSaveMode": "file"
     },
     "[terraform-vars]": {
-        "editor.defaultFormatter": "hashicorp.terraform",
+        "editor.defaultFormatter": "gamunu.opentofu",
         "editor.formatOnSave": true,
         "editor.formatOnSaveMode": "file"
     },
     "[jsonc]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2
+    },
+    "[json]": {
         "editor.insertSpaces": true,
         "editor.tabSize": 2
     }
