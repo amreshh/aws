@@ -190,5 +190,5 @@ resource "aws_iam_policy_attachment" "eks_cluster_policy_attachment" {
 resource "aws_iam_policy_attachment" "eks_node_group_attachment" {
   name       = "eks_node_group_attachment"
   policy_arn = aws_iam_policy.eks_node_group_policy.arn
-  roles      = [aws_iam_role.eks_cluster_role.name]
+  roles      = [aws_iam_role.eks_node_group_role.name]
 }

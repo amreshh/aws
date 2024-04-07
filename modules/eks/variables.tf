@@ -1,5 +1,4 @@
-variable "subnet_ids" {
-  type        = list(string)
-  description = "subnet ids"
-  default     = []
+variable "vpc_id" {
+  type        = string
+  description = "vpc id"
 }

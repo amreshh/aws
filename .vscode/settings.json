@@ -8,18 +8,18 @@
     "[terraform]": {
         "editor.defaultFormatter": "gamunu.opentofu",
         "editor.formatOnSave": false,
-        "editor.codeActionsOnSave": {
-            "source.formatAll.opentofu": "explicit"
-        },
+        "editor.formatOnSaveMode": "file"
     },
     "[terraform-vars]": {
         "editor.defaultFormatter": "gamunu.opentofu",
-        "editor.formatOnSave": false,
-        "editor.codeActionsOnSave": {
-            "source.formatAll.opentofu": "explicit"
-        },
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file"
     },
     "[jsonc]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2
+    },
+    "[json]": {
         "editor.insertSpaces": true,
         "editor.tabSize": 2
     }

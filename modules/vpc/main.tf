@@ -6,29 +6,43 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
 
   tags = {
-    Name = "sandbox vpc"
+    Name = "sandbox-vpc"
+  }
+}
+
+resource "aws_eip" "nat_eip" {
+  domain = "vpc"
+  tags = {
+    Name = "nat-eip"
   }
 }
 
 resource "aws_subnet" "public_subnets" {
-  count             = length(var.public_subnet_cidrs)
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = element(var.public_subnet_cidrs, count.index)
-  availability_zone = element(var.availability_zones, count.index)
+  for_each                = var.public_subnets
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = each.value
+  availability_zone       = each.key
+  map_public_ip_on_launch = true
 
   tags = {
-    Name = "public subnet ${element(var.availability_zones, count.index)}"
+    Name                                = "public-subnet-${each.key}"
+    "kubernetes.io/role/internal-elb"   = "1"
+    "kubernetes.io/cluster/eks_cluster" = "owned"
+
   }
 }
 
 resource "aws_subnet" "private_subnets" {
-  count             = length(var.private_subnet_cidrs)
+  for_each          = var.private_subnets
   vpc_id            = aws_vpc.main.id
-  cidr_block        = element(var.private_subnet_cidrs, count.index)
-  availability_zone = element(var.availability_zones, count.index)
+  cidr_block        = each.value
+  availability_zone = each.key
 
   tags = {
-    Name = "private subnet ${element(var.availability_zones, count.index)}"
+    Name                                = "private-subnet-${each.key}"
+    "kubernetes.io/role/internal-elb"   = "1"
+    "kubernetes.io/cluster/eks_cluster" = "owned"
+
   }
 }
 
@@ -36,17 +50,17 @@ resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "public internet gateway"
+    Name = "public-internet-gateway"
   }
 }
 
-resource "aws_nat_gateway" "private_nat_gateway" {
-  count             = length(aws_subnet.private_subnets)
-  connectivity_type = "private"
-  subnet_id         = element(aws_subnet.public_subnets[*].id, count.index)
+resource "aws_nat_gateway" "public_nat_gateway" {
+  connectivity_type = "public"
+  allocation_id     = aws_eip.nat_eip.id
+  subnet_id         = aws_subnet.public_subnets["eu-central-1a"].id
 
   tags = {
-    Name = "private nat gateway ${element(var.availability_zones, count.index)}"
+    Name = "public-nat-gateway-eu-central-1a"
   }
 }
 
@@ -56,7 +70,7 @@ resource "aws_default_route_table" "default_route_table" {
   route = []
 
   tags = {
-    Name = "default route table"
+    Name = "default-route-table"
   }
 }
 
@@ -69,34 +83,34 @@ resource "aws_route_table" "public_route_table" {
   }
 
   tags = {
-    Name = "public route table"
+    Name = "public-route-table"
   }
 }
 
 resource "aws_route_table" "private_route_table" {
-  count  = length(aws_nat_gateway.private_nat_gateway)
-  vpc_id = aws_vpc.main.id
+  for_each = var.private_subnets
+  vpc_id   = aws_vpc.main.id
 
   route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.private_nat_gateway[count.index].id
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.public_nat_gateway.id
   }
 
   tags = {
-    Name = "private route table ${element(var.availability_zones, count.index)}"
+    Name = "private-route-table-${each.key}"
   }
 }
 
 resource "aws_route_table_association" "public_subnet_association" {
-  count          = length(var.public_subnet_cidrs)
-  subnet_id      = element(aws_subnet.public_subnets[*].id, count.index)
+  for_each       = aws_subnet.public_subnets
+  subnet_id      = each.value.id
   route_table_id = aws_route_table.public_route_table.id
 }
 
 resource "aws_route_table_association" "private_subnet_association" {
-  count          = length(var.private_subnet_cidrs)
-  subnet_id      = element(aws_subnet.private_subnets[*].id, count.index)
-  route_table_id = element(aws_route_table.private_route_table[*].id, count.index)
+  for_each       = aws_subnet.private_subnets
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.private_route_table[each.key].id
 }
 
 # resource "aws_default_security_group" "default" {
